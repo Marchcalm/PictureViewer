@@ -15,7 +15,6 @@
 #include <QFileDialog>
 #include <QTimer>
 #include <QDir>
-#include <QDebug>
 
 static const qreal kSceneMaxWidth = 10000.0;
 static const qreal kSceneMaxHeight = 10000.0;

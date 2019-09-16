@@ -3,6 +3,9 @@
 
 #include <QObject>
 
+class QWidget;
+class MainWindow;
+
 class UiGlobalSettings : public QObject
 {
     Q_OBJECT
@@ -17,6 +20,9 @@ public:
         return &ins;
     }
 
+    MainWindow *mainWindow() const;
+    void setMainWindowObject(MainWindow *w);
+
     void configure(const QString &fileName);
 
     int themeType() const;
@@ -24,6 +30,8 @@ public:
     QColor themeColor();
 
     QString appName() const;
+
+    void setWidgetBackgroundColor(QWidget *w, const QColor &c);
 
 signals:
     void themeChanged(int type);

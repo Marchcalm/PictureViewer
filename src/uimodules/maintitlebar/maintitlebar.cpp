@@ -8,8 +8,6 @@
 #include <QHBoxLayout>
 #include <QMenu>
 
-#include <QDebug>
-
 namespace TR {
 static const QString CoolBlack(QObject::tr("Cool Black"));
 static const QString ClassicWhite(QObject::tr("Classic White"));

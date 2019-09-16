@@ -1,8 +1,7 @@
 #include "uiglobal.h"
 
-#include <QColor>
+#include <QWidget>
 #include <QApplication>
-#include <QFont>
 #include <QResource>
 #include <QMap>
 #include <QDebug>
@@ -17,9 +16,20 @@ public:
     UiGlobalSettings *q;    
     int themeType_;
     QMap<int, QString> rccMap_;
+    MainWindow *mainWindow_;
 
     void init();
 };
+
+MainWindow *UiGlobalSettings::mainWindow() const
+{
+    return d->mainWindow_;
+}
+
+void UiGlobalSettings::setMainWindowObject(MainWindow *w)
+{
+    d->mainWindow_ = w;
+}
 
 void UiGlobalSettings::configure(const QString &fileName)
 {
@@ -63,6 +73,16 @@ QColor UiGlobalSettings::themeColor()
 QString UiGlobalSettings::appName() const
 {
     return QLatin1String("Picture Viewer");
+}
+
+void UiGlobalSettings::setWidgetBackgroundColor(QWidget *w, const QColor &c)
+{
+    if (w) {
+        QPalette pal(w->palette());
+        pal.setColor(QPalette::Window, c);
+        w->setPalette(pal);
+        w->setAutoFillBackground(true);
+    }
 }
 
 UiGlobalSettings::UiGlobalSettings(QObject *parent) : QObject(parent),

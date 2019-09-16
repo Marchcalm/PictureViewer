@@ -19,6 +19,7 @@ private slots:
 
 protected:
     void keyPressEvent(QKeyEvent *) override;
+    void changeEvent(QEvent *) override;
 
 private:
     class PrivateData;

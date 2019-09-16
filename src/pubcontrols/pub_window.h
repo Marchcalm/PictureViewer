@@ -7,11 +7,15 @@
 class PubWindow : public QWidget
 {
     Q_OBJECT
+//    Q_PROPERTY(QColor windowShadow READ windowShadow WRITE setWindowShadow)
 public:
     explicit PubWindow(QWidget *parent = nullptr);
 
     QWidget *contentWidget() const;
     void setBackgroundColor(const QColor &color);
+
+    QColor windowShadow() const;
+    void setWindowShadow(const QColor &c);
 
 signals:
     void windowStateChaned(Qt::WindowStates state);
@@ -33,6 +37,7 @@ private:
     int cursorPosition_;
     Qt::CursorShape cursorShepe_;
     QWidget *contentWidget_;
+    QColor windowShadowColor_;
 };
 
 #endif // PUB_WINDOW_H

@@ -17,7 +17,8 @@ PubWindow::PubWindow(QWidget *parent)
       isPress_(false),
       cursorPosition_(11),
       cursorShepe_(Qt::ArrowCursor),
-      contentWidget_(nullptr)
+      contentWidget_(nullptr),
+      windowShadowColor_(180, 0, 0)
 {
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -47,6 +48,20 @@ void PubWindow::setBackgroundColor(const QColor &color)
     QPalette pal(contentWidget_->palette());
     pal.setColor(QPalette::Window, color);
     contentWidget_->setPalette(pal);
+    contentWidget_->setAutoFillBackground(true);
+}
+
+QColor PubWindow::windowShadow() const
+{
+    return windowShadowColor_;
+}
+
+void PubWindow::setWindowShadow(const QColor &c)
+{
+    if (c.isValid()) {
+        windowShadowColor_ = c;
+        setShadowEffect(kPadding >> 1);
+    }
 }
 
 void PubWindow::mousePressEvent(QMouseEvent* e)
@@ -125,30 +140,31 @@ void PubWindow::mouseMoveEvent(QMouseEvent* e)
 
 void PubWindow::changeEvent(QEvent *e)
 {
-    if(e->type() != QEvent::WindowStateChange)
-        return;
+    if(e->type() != QEvent::WindowStateChange) {
+        QWidget::changeEvent(e);
+    } else {
+        Qt::WindowStates state = windowState();
+        emit windowStateChaned(state);
 
-    Qt::WindowStates state = windowState();
-    emit windowStateChaned(state);
-
-    switch (state) {
-    case Qt::WindowNoState: {
-        if (layout()->margin() == 0) {
-            layout()->setMargin(kPadding >> 1);
-            setShadowEffect(kPadding >> 1);
+        switch (state) {
+        case Qt::WindowNoState: {
+            if (layout()->margin() == 0) {
+                layout()->setMargin(kPadding >> 1);
+                setShadowEffect(kPadding >> 1);
+            }
         }
-    }
-        break;
-    case Qt::WindowMaximized:
-        layout()->setMargin(0);
-        setShadowEffect(0.0);
-        break;
-    case Qt::WindowFullScreen:
-        layout()->setMargin(0);
-        setShadowEffect(0.0);
-        break;
-    default:
-        break;
+            break;
+        case Qt::WindowMaximized:
+            layout()->setMargin(0);
+            setShadowEffect(0.0);
+            break;
+        case Qt::WindowFullScreen:
+            layout()->setMargin(0);
+            setShadowEffect(0.0);
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -212,7 +228,7 @@ void PubWindow::setShadowEffect(qreal blurRadius)
         QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect;
         shadowEffect->setOffset(0, 0);
 //        shadowEffect->setColor(QColor(60, 60, 60));
-        shadowEffect->setColor(QColor(160, 0, 0));
+        shadowEffect->setColor(windowShadowColor_);
         shadowEffect->setBlurRadius(blurRadius);
         contentWidget_->setGraphicsEffect(shadowEffect);
     }

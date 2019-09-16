@@ -1,12 +1,14 @@
 #include "appsettinswidget.h"
 #include "pub_pushbutton.h"
 #include "pub_label.h"
+#include "appsettingstabbar.h"
+#include "appsettingsbodywidget.h"
+#include "uiglobal.h"
 
-#include <QStackedWidget>
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-
-#include <QDebug>
+#include <QEvent>
 
 namespace TR {
 static const QString SettingsCenter(QObject::tr("Settings Center"));
@@ -20,7 +22,9 @@ public:
     {}
 
     AppSettinsWidget *q;
-    QStackedWidget *stackedWidget_;
+
+    AppSettingsTabBar *bodyTabBar_;
+    AppSettingsBodyWidget *bodyContentWidget_;
 
     void init();
 };
@@ -33,14 +37,13 @@ AppSettinsWidget::AppSettinsWidget(QWidget *parent) : PubSubWindow(parent),
 
 AppSettinsWidget::~AppSettinsWidget()
 {
-    qDebug() << __PRETTY_FUNCTION__;
     delete d;
 }
 
 void AppSettinsWidget::PrivateData::init()
 {
     q->setFixedSize(600, 410);
-//    q->setWindowFlags(q->windowFlags() | Qt::WindowStaysOnTopHint);
+    q->setWindowFlags(q->windowFlags() | Qt::SubWindow);
     q->setAttribute(Qt::WA_DeleteOnClose);
 
     //! [0] titleBar
@@ -48,10 +51,7 @@ void AppSettinsWidget::PrivateData::init()
     int iconw = th - 2;
     QWidget *titleBar = new QWidget(q);
     titleBar->setFixedHeight(th);
-    QPalette pal(titleBar->palette());
-    pal.setColor(QPalette::Window, QColor(140, 140, 140, 150));
-    titleBar->setPalette(pal);
-    titleBar->setAutoFillBackground(true);
+    UiGlobalSettings::obj()->setWidgetBackgroundColor(titleBar, QColor(140, 140, 140, 150));
 
     PubLabel *logoLabel = new PubLabel(titleBar);
     logoLabel->setFixedSize(iconw, iconw);
@@ -81,13 +81,31 @@ void AppSettinsWidget::PrivateData::init()
     //! [0] titleBar
 
     //! [1] body
-    stackedWidget_ = new QStackedWidget(q);
+    QWidget *bodyWidget = new QWidget(q);
+
+    bodyTabBar_ = new AppSettingsTabBar(bodyWidget);
+    bodyTabBar_->setFixedWidth(92);
+
+    QFrame *vline = new QFrame(bodyWidget);
+    vline->setFixedWidth(1);
+    UiGlobalSettings::obj()->setWidgetBackgroundColor(vline, QColor(220, 231, 237));
+
+    bodyContentWidget_ = new AppSettingsBodyWidget(bodyWidget);
+
+    QHBoxLayout *layout2 = new QHBoxLayout;
+    layout2->addWidget(bodyTabBar_);
+    layout2->addWidget(vline);
+    layout2->addWidget(bodyContentWidget_);
+    layout2->setMargin(0);
+    layout2->setSpacing(0);
+    bodyWidget->setLayout(layout2);
     //! [1] body
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(titleBar);
-    mainLayout->addWidget(stackedWidget_);
+    mainLayout->addWidget(bodyWidget);
     mainLayout->setMargin(0);
     mainLayout->setSpacing(0);
-    q->setLayout(mainLayout);
+//    q->setLayout(mainLayout);
+    q->contentWidget()->setLayout(mainLayout);
 }

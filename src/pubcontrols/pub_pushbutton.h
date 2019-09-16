@@ -22,6 +22,11 @@ public:
     QColor backgroundColorByPressed() const;
     void setBackgroundColorByPressed(const QColor &c);
 
+    QString text() const;
+    void setText(const QString &text, bool translatable = true);
+
+    void setTextColor(const QColor &normal, const QColor &hovered = QColor(), const QColor &pressed = QColor());
+
 protected:
     void paintEvent(QPaintEvent *) override;
     bool event(QEvent *e) override;
@@ -35,6 +40,11 @@ private:
     uint adaptiveType_ : 2;
     QColor backgroundColorByHovered_;
     QColor backgroundColorByPressed_;
+    QString text_;
+    bool translatable_;
+    QColor textNormalColor_;
+    QColor textHoveredColor_;
+    QColor textPressedColor_;
 };
 
 #endif // PUB_PUSHBUTTON_H

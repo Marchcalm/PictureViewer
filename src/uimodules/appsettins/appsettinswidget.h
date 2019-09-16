@@ -8,7 +8,7 @@ class AppSettinsWidget : public PubSubWindow
     Q_OBJECT
 public:
     explicit AppSettinsWidget(QWidget *parent = nullptr);
-    ~AppSettinsWidget();
+    ~AppSettinsWidget() override;
 
 private:
     class PrivateData;

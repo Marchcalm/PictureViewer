@@ -9,6 +9,9 @@ class PubSubWindow : public QWidget
 public:
     explicit PubSubWindow(QWidget *parent = nullptr);
 
+    QWidget *contentWidget() const;
+    void setBackgroundColor(const QColor &color);
+
 protected:
     void mousePressEvent(QMouseEvent *) override;
     void mouseMoveEvent(QMouseEvent *) override;
@@ -17,6 +20,7 @@ protected:
 private:
     bool isPress_;
     QPoint lastGlobalPos_;
+    QWidget *contentWidget_;
 };
 
 #endif // PUB_SUBWINDOW_H

@@ -5,7 +5,7 @@
 
 PubPushButton::PubPushButton(QWidget *parent) : QAbstractButton(parent),
     isEnter_(false), adaptiveType_(AT_NoAdaptive), backgroundColorByHovered_(180, 180, 180, 60),
-    backgroundColorByPressed_(30, 30, 30, 180)
+    backgroundColorByPressed_(30, 30, 30, 180), textNormalColor_(60, 60, 60)
 {
 }
 
@@ -64,18 +64,80 @@ void PubPushButton::setBackgroundColorByPressed(const QColor &c)
     backgroundColorByPressed_ = c;
 }
 
+QString PubPushButton::text() const
+{
+    return text_;
+}
+
+void PubPushButton::setText(const QString &text, bool translatable)
+{
+    if (text_ != text) {
+        text_ = text;
+        translatable_ = translatable;
+        update();
+    }
+}
+
+void PubPushButton::setTextColor(const QColor &normal, const QColor &hovered, const QColor &pressed)
+{
+    textNormalColor_ = normal;
+    textHoveredColor_ = hovered;
+    textPressedColor_ = pressed;
+}
+
 void PubPushButton::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
 
-    if (isChecked()) {
-        drawBackground(2, &painter);
-    } else {
-        if (isDown()) {
-            drawBackground(1, &painter);
+    if (!backgroundPixmaps_[0].isNull()) {
+        if (isChecked()) {
+            drawBackground(2, &painter);
         } else {
-            drawBackground(0, &painter);
+            if (isDown()) {
+                drawBackground(1, &painter);
+            } else {
+                drawBackground(0, &painter);
+            }
         }
+    }
+
+    if (!text_.isEmpty()) {
+        QColor textColor;
+        if (isChecked()) {
+            textColor = textPressedColor_;
+        } else {
+            if (isDown()) {
+                textColor = textPressedColor_;
+            } else {
+                if (isEnter_) {
+                    textColor = textHoveredColor_;
+                } else {
+                    textColor = textNormalColor_;
+                }
+            }
+        }
+
+        if (!textColor.isValid()) {
+            textColor = textNormalColor_;
+        }
+        painter.setPen(textColor);
+
+        QString tmpText;
+        if (translatable_) {
+            tmpText = QObject::tr(text_.toUtf8().constData());
+        } else {
+            tmpText = text_;
+        }
+
+        QFontMetrics fontMetrics(font());
+        int padding = 2;
+        QRect textRect(padding, padding, width() - padding * 2, height() - padding * 2);
+        int textWidth = fontMetrics.horizontalAdvance(tmpText);
+        if (textWidth > textRect.width()) {
+            tmpText = fontMetrics.elidedText(tmpText, Qt::ElideRight, textRect.width());
+        }
+        painter.drawText(textRect, Qt::AlignCenter, tmpText);
+
     }
 }
 

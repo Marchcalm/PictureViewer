@@ -31,6 +31,9 @@ SOURCES += \
         src/pubcontrols/pub_pushbutton.cpp \
         src/pubcontrols/pub_window.cpp \
         src/main.cpp \
+        src/uimodules/appsettins/appsettingsbodywidget.cpp \
+        src/uimodules/appsettins/appsettingsbodywidget/asb_basicsettingswidget.cpp \
+        src/uimodules/appsettins/appsettingstabbar.cpp \
         src/uimodules/appsettins/appsettinswidget.cpp \
         src/uimodules/maintitlebar/maintitlebar.cpp \
         src/mainwindow.cpp \
@@ -41,6 +44,9 @@ SOURCES += \
 
 HEADERS += \
         src/pubcontrols/pub_subwindow.h \
+        src/uimodules/appsettins/appsettingsbodywidget.h \
+        src/uimodules/appsettins/appsettingsbodywidget/asb_basicsettingswidget.h \
+        src/uimodules/appsettins/appsettingstabbar.h \
         src/uimodules/appsettins/appsettinswidget.h \
         src/uimodules/maintitlebar/maintitlebar.h \
         src/mainwindow.h \

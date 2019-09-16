@@ -8,11 +8,10 @@
 
 #include <QVBoxLayout>
 #include <QApplication>
-#include <QPainter>
 #include <QTimer>
 #include <QKeyEvent>
 #include <QPointer>
-#include <QDebug>
+#include <QEvent>
 
 class MainWindow::PrivateData
 {
@@ -169,6 +168,21 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     default:
         break;
     }
+
+    PubWindow::keyPressEvent(e);
+}
+
+void MainWindow::changeEvent(QEvent *e)
+{
+    if (e->type() == QEvent::ActivationChange) {
+        if (this->isActiveWindow()) {
+            if (d->appSettingsWidget_) {
+                d->appSettingsWidget_->raise();
+            }
+        }
+    }
+
+    PubWindow::changeEvent(e);
 }
 
 void MainWindow::PrivateData::init()
@@ -188,6 +202,7 @@ void MainWindow::PrivateData::init()
     mainLayout->addWidget(pictureToolBar_);
     q->contentWidget()->setLayout(mainLayout);
 
+    UiGlobalSettings::obj()->setMainWindowObject(q);
     UiGlobalSettings::obj()->configure(QLatin1String("setup.ini"));
 
     QObject::connect(titleBar_, &MainTitleBar::clicked, q, &MainWindow::onMainTitleBarClicked);
@@ -220,12 +235,16 @@ void MainWindow::PrivateData::showAppSettingsWidget()
 {
     setWindowOverlayVisible(true);
 
-    if (appSettingsWidget_.isNull()) {
+    if (!appSettingsWidget_) {
         appSettingsWidget_ = new AppSettinsWidget;
-        QObject::connect(appSettingsWidget_, &AppSettinsWidget::destroyed, [&]() { setWindowOverlayVisible(false); });
+        QObject::connect(appSettingsWidget_, &AppSettinsWidget::destroyed, [&]() {
+            setWindowOverlayVisible(false);
+            q->setEnabled(true);
+        });
     }
     int cx = q->x() + (q->width() - appSettingsWidget_->width())/2;
     int cy = q->y() + (q->height() - appSettingsWidget_->height())/2;
     appSettingsWidget_->move(cx, cy);
     appSettingsWidget_->show();
+    q->setEnabled(false);
 }
