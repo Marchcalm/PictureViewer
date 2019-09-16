@@ -40,4 +40,4 @@ private:
     QColor windowShadowColor_;
 };
 
-#endif // PUB_WINDOW_H
+#endif // PUB_WINDOW_H6

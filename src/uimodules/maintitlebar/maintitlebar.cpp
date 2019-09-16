@@ -75,7 +75,7 @@ void MainTitleBar::onWindowStateChanged(Qt::WindowStates state)
 void MainTitleBar::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    painter.fillRect(rect(), UiGlobalSettings::obj()->themeColor());
+    painter.fillRect(rect(), G_UISETTIGNS->themeColor());
 }
 
 void MainTitleBar::mouseDoubleClickEvent(QMouseEvent *e)
@@ -145,7 +145,7 @@ void MainTitleBar::PrivateData::init()
     logoLabel_->setMouseTracking(true);
 
     titleLabel_ = new PubLabel(q);
-    titleLabel_->setText(UiGlobalSettings::obj()->appName(), false);
+    titleLabel_->setText(G_UISETTIGNS->appName(), false);
     titleLabel_->setMinimumSize(300, iconHeight);
     titleLabel_->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     titleLabel_->setPointSize(10);
@@ -196,7 +196,7 @@ void MainTitleBar::PrivateData::init()
     layout->addWidget(closeButton_);
     q->setLayout(layout);
 
-    QObject::connect(UiGlobalSettings::obj(), &UiGlobalSettings::themeChanged, q, &MainTitleBar::onThemeChanged);
+    QObject::connect(G_UISETTIGNS, &UiGlobalSettings::themeChanged, q, &MainTitleBar::onThemeChanged);
 }
 
 void MainTitleBar::PrivateData::popupSkinMenu()
@@ -222,14 +222,14 @@ void MainTitleBar::PrivateData::popupSkinMenu()
     menu->addAction(TR::CoolBlack);
     menu->addAction(TR::ClassicWhite);
 
-    menu->actions().at(UiGlobalSettings::obj()->themeType())->setIcon(QIcon(":/images/hy_main_gou_01.png"));
+    menu->actions().at(G_UISETTIGNS->themeType())->setIcon(QIcon(":/images/hy_main_gou_01.png"));
 
     QObject::connect(menu, &QMenu::triggered, [&](QAction* action){
         if (TR::CoolBlack == action->text()) {
-            UiGlobalSettings::obj()->setTheme(UiGlobalSettings::TT_CoolBlack);
+            G_UISETTIGNS->setTheme(UiGlobalSettings::TT_CoolBlack);
         }
         else if (TR::ClassicWhite == action->text()) {
-            UiGlobalSettings::obj()->setTheme(UiGlobalSettings::TT_ClassicWhite);
+            G_UISETTIGNS->setTheme(UiGlobalSettings::TT_ClassicWhite);
         }
     });
 
@@ -268,7 +268,7 @@ void MainTitleBar::PrivateData::popupPrimaryMenu()
                                       ));
     menu->setAttribute(Qt::WA_DeleteOnClose);
 
-    menu->addAction(QString("About %1").arg(UiGlobalSettings::obj()->appName()));
+    menu->addAction(QString("About %1").arg(G_UISETTIGNS->appName()));
     menu->addSeparator();
     menu->addAction(new QAction(QIcon(QLatin1String(":/images/hy_main_settings_01.png")), TR::Settings));
 

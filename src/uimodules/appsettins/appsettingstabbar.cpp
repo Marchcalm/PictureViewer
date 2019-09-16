@@ -23,9 +23,9 @@ public:
 
     void setChecked(bool checked) {
         if (checked) {
-            UiGlobalSettings::obj()->setWidgetBackgroundColor(checkFrame_, QColor(34, 133, 234));
+            G_UISETTIGNS->setWidgetBackgroundColor(checkFrame_, QColor(34, 133, 234));
         } else {
-            UiGlobalSettings::obj()->setWidgetBackgroundColor(checkFrame_, Qt::transparent);
+            G_UISETTIGNS->setWidgetBackgroundColor(checkFrame_, Qt::transparent);
         }
         button_->setChecked(checked);
     }
@@ -82,7 +82,7 @@ void AppSettingsTabBar::onButtonClicked()
 void AppSettingsTabBar::PrivateData::init()
 {
     QStringList buttonNameList;
-    buttonNameList << "Basic settings" << "Basic settings2";
+    buttonNameList << "Basic settings" << "PowerPoint";
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
 

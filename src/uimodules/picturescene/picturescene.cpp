@@ -77,10 +77,10 @@ PictureScene::PictureScene(QWidget *parent) : QGraphicsView(parent),
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // 设置背景颜色和边框 
-    setStyleSheet(QString("background: %1; border: 0px;").arg(UiGlobalSettings::obj()->themeColor().name()));
+    setStyleSheet(QString("background: %1; border: 0px;").arg(G_UISETTIGNS->themeColor().name()));
 
-    QObject::connect(UiGlobalSettings::obj(), &UiGlobalSettings::themeChanged, [&](){
-        QColor c = UiGlobalSettings::obj()->themeColor();
+    QObject::connect(G_UISETTIGNS, &UiGlobalSettings::themeChanged, [&](){
+        QColor c = G_UISETTIGNS->themeColor();
         this->setStyleSheet(QString("background: %1; border: 0px;").arg(c.name()));
         this->setBackgroundBrush(c);
     });
@@ -102,7 +102,6 @@ bool PictureScene::openFile()
     showPicture(fileName);
     d->flushScene();
 
-    d->updateFileInfo(fileName, true);
     return true;
 }
 
@@ -118,7 +117,7 @@ void PictureScene::showPicture(const QPixmap &pixmap, AdaptiveType type)
         d->scene_ = new QGraphicsScene(this);
         setScene(d->scene_);
         setSceneRect(0.0, 0.0, kSceneMaxWidth, kSceneMaxHeight);
-        setBackgroundBrush(UiGlobalSettings::obj()->themeColor());
+        setBackgroundBrush(G_UISETTIGNS->themeColor());
     }
 
     d->scene_->clear();
@@ -149,6 +148,7 @@ void PictureScene::showPicture(const QPixmap &pixmap, AdaptiveType type)
 void PictureScene::showPicture(const QString &fileName, AdaptiveType type)
 {
     showPicture(QPixmap::fromImage(QImage(fileName)), type);
+    d->updateFileInfo(fileName, true);
 }
 
 void PictureScene::adaptiveToggle()
@@ -503,7 +503,7 @@ void PictureScene::PrivateData::updateFileInfo(const QString &fileName, bool isS
         fileIndex_ = imagePathList_.indexOf(fileName);
     }
 
-    fileInfo_.append(QString(" - %1/%2").arg(fileIndex_).arg(imagePathList_.size()));
+    fileInfo_.append(QString(" - %1/%2").arg(fileIndex_+1).arg(imagePathList_.size()));
     emit q->fileInfoChanged(fileInfo_);
 }
 

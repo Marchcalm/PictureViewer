@@ -51,7 +51,7 @@ void AppSettinsWidget::PrivateData::init()
     int iconw = th - 2;
     QWidget *titleBar = new QWidget(q);
     titleBar->setFixedHeight(th);
-    UiGlobalSettings::obj()->setWidgetBackgroundColor(titleBar, QColor(140, 140, 140, 150));
+    G_UISETTIGNS->setWidgetBackgroundColor(titleBar, QColor(140, 140, 140, 150));
 
     PubLabel *logoLabel = new PubLabel(titleBar);
     logoLabel->setFixedSize(iconw, iconw);
@@ -88,7 +88,7 @@ void AppSettinsWidget::PrivateData::init()
 
     QFrame *vline = new QFrame(bodyWidget);
     vline->setFixedWidth(1);
-    UiGlobalSettings::obj()->setWidgetBackgroundColor(vline, QColor(220, 231, 237));
+    G_UISETTIGNS->setWidgetBackgroundColor(vline, QColor(220, 231, 237));
 
     bodyContentWidget_ = new AppSettingsBodyWidget(bodyWidget);
 
@@ -106,6 +106,7 @@ void AppSettinsWidget::PrivateData::init()
     mainLayout->addWidget(bodyWidget);
     mainLayout->setMargin(0);
     mainLayout->setSpacing(0);
-//    q->setLayout(mainLayout);
     q->contentWidget()->setLayout(mainLayout);
+
+    QObject::connect(bodyTabBar_, &AppSettingsTabBar::currentIndexChanged, bodyContentWidget_, &AppSettingsBodyWidget::setCurrentIndex);
 }

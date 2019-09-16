@@ -50,7 +50,7 @@ void PictureToolBar::setAdaptiveType(int type)
 void PictureToolBar::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    painter.fillRect(rect(), UiGlobalSettings::obj()->themeColor());
+    painter.fillRect(rect(), G_UISETTIGNS->themeColor());
 }
 
 void PictureToolBar::onButtonClicked()
@@ -189,7 +189,7 @@ void PictureToolBar::PrivateData::init()
     layout->addStretch();
     q->setLayout(layout);
 
-    QObject::connect(UiGlobalSettings::obj(), &UiGlobalSettings::themeChanged, q, &PictureToolBar::onThemeChanged);
+    QObject::connect(G_UISETTIGNS, &UiGlobalSettings::themeChanged, q, &PictureToolBar::onThemeChanged);
 }
 
 void PictureToolBar::PrivateData::updateAdaptiveButtonState()

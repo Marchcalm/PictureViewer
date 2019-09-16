@@ -44,12 +44,12 @@ void AsbBasicSettingsWidget::PrivateData::init()
     windowShadowLabel_->setText("Window shadow");
 
     windowShadowBtn_ = new QPushButton(q);
-    windowShadowBtn_->setStyleSheet(QString("background: %1").arg(UiGlobalSettings::obj()->mainWindow()->windowShadow().name()));
+    windowShadowBtn_->setStyleSheet(QString("background: %1").arg(MAINWINDOW->windowShadow().name()));
     QObject::connect(windowShadowBtn_, &QPushButton::clicked, [&]() {
-        QColor c = QColorDialog::getColor();
+        QColor c = QColorDialog::getColor(MAINWINDOW->windowShadow());
         if (c.isValid()) {
             windowShadowBtn_->setStyleSheet(QString("background: %1").arg(c.name()));
-            UiGlobalSettings::obj()->mainWindow()->setWindowShadow(c);
+            MAINWINDOW->setWindowShadow(c);
         }
     });
 }

@@ -24,6 +24,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+RC_ICONS = skin/logo.ico
+
 SOURCES += \
         src/pubcontrols/pub_subwindow.cpp \
         src/uiglobal.cpp \
@@ -33,6 +35,7 @@ SOURCES += \
         src/main.cpp \
         src/uimodules/appsettins/appsettingsbodywidget.cpp \
         src/uimodules/appsettins/appsettingsbodywidget/asb_basicsettingswidget.cpp \
+        src/uimodules/appsettins/appsettingsbodywidget/asb_powerpointwidget.cpp \
         src/uimodules/appsettins/appsettingstabbar.cpp \
         src/uimodules/appsettins/appsettinswidget.cpp \
         src/uimodules/maintitlebar/maintitlebar.cpp \
@@ -46,6 +49,7 @@ HEADERS += \
         src/pubcontrols/pub_subwindow.h \
         src/uimodules/appsettins/appsettingsbodywidget.h \
         src/uimodules/appsettins/appsettingsbodywidget/asb_basicsettingswidget.h \
+        src/uimodules/appsettins/appsettingsbodywidget/asb_powerpointwidget.h \
         src/uimodules/appsettins/appsettingstabbar.h \
         src/uimodules/appsettins/appsettinswidget.h \
         src/uimodules/maintitlebar/maintitlebar.h \

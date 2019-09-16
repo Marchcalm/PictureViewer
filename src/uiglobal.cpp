@@ -16,20 +16,9 @@ public:
     UiGlobalSettings *q;    
     int themeType_;
     QMap<int, QString> rccMap_;
-    MainWindow *mainWindow_;
 
     void init();
 };
-
-MainWindow *UiGlobalSettings::mainWindow() const
-{
-    return d->mainWindow_;
-}
-
-void UiGlobalSettings::setMainWindowObject(MainWindow *w)
-{
-    d->mainWindow_ = w;
-}
 
 void UiGlobalSettings::configure(const QString &fileName)
 {

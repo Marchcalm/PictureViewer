@@ -1,5 +1,6 @@
 #include "appsettingsbodywidget.h"
 #include "appsettingsbodywidget/asb_basicsettingswidget.h"
+#include "appsettingsbodywidget/asb_powerpointwidget.h"
 
 #include <QStackedWidget>
 
@@ -7,13 +8,14 @@ class AppSettingsBodyWidget::PrivateData
 {
 public:
     explicit PrivateData(AppSettingsBodyWidget *parent) :
-        q(parent), basicSettingsWidget_(nullptr)
+        q(parent), basicSettingsWidget_(nullptr), PowerPointWidget_(nullptr)
     {}
 
     AppSettingsBodyWidget *q;
 
     QStackedWidget *stackedWidget_;
     AsbBasicSettingsWidget *basicSettingsWidget_;
+    AsbPowerPointWidget *PowerPointWidget_;
 
     void init();
 };
@@ -36,6 +38,11 @@ void AppSettingsBodyWidget::setCurrentIndex(int index)
         d->stackedWidget_->setCurrentWidget(d->basicSettingsWidget_);
         break;
     case 1:
+        if (!d->PowerPointWidget_) {
+            d->PowerPointWidget_ = new AsbPowerPointWidget(this);
+            d->stackedWidget_->addWidget(d->PowerPointWidget_);
+        }
+        d->stackedWidget_->setCurrentWidget(d->PowerPointWidget_);
         break;
     default:
         break;

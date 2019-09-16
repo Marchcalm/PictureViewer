@@ -1,6 +1,14 @@
 #ifndef UIGLOBAL_H
 #define UIGLOBAL_H
 
+#ifdef G_UISETTIGNS
+#undef G_UISETTIGNS
+#endif // G_UISETTIGNS
+
+#define G_UISETTIGNS UiGlobalSettings::obj()
+
+#define MAINWINDOW UiGlobalSettings::obj()->mainWindow
+
 #include <QObject>
 
 class QWidget;
@@ -20,8 +28,7 @@ public:
         return &ins;
     }
 
-    MainWindow *mainWindow() const;
-    void setMainWindowObject(MainWindow *w);
+    MainWindow *mainWindow;
 
     void configure(const QString &fileName);
 

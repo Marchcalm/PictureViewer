@@ -5,7 +5,7 @@
 #include <QHBoxLayout>
 #include <QEvent>
 
-static const int kPadding = 16;
+static const int kPadding = 20;
 
 static int helperCalcPosition(int pos, int range)
 {
@@ -18,7 +18,7 @@ PubWindow::PubWindow(QWidget *parent)
       cursorPosition_(11),
       cursorShepe_(Qt::ArrowCursor),
       contentWidget_(nullptr),
-      windowShadowColor_(180, 0, 0)
+      windowShadowColor_(0, 170, 255)
 {
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowMinimizeButtonHint);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -33,6 +33,7 @@ PubWindow::PubWindow(QWidget *parent)
     mainLayout->addWidget(contentWidget_);
     setLayout(mainLayout);
 
+    setBackgroundColor(QColor(255, 255, 255));
     setShadowEffect(kPadding >> 1);
 }
 
@@ -140,9 +141,7 @@ void PubWindow::mouseMoveEvent(QMouseEvent* e)
 
 void PubWindow::changeEvent(QEvent *e)
 {
-    if(e->type() != QEvent::WindowStateChange) {
-        QWidget::changeEvent(e);
-    } else {
+    if(e->type() == QEvent::WindowStateChange) {
         Qt::WindowStates state = windowState();
         emit windowStateChaned(state);
 
@@ -166,6 +165,7 @@ void PubWindow::changeEvent(QEvent *e)
             break;
         }
     }
+    QWidget::changeEvent(e);
 }
 
 int PubWindow::calcPosition(const QPoint& pt)

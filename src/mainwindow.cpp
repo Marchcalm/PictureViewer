@@ -128,7 +128,7 @@ void MainWindow::onPictureToolBarClicked(int buttonType)
 void MainWindow::onThemeChanged(int type)
 {
     Q_UNUSED(type);
-    setBackgroundColor(UiGlobalSettings::obj()->themeColor());
+    setBackgroundColor(G_UISETTIGNS->themeColor());
 }
 
 void MainWindow::onWindowStateChanged(Qt::WindowStates state)
@@ -202,15 +202,15 @@ void MainWindow::PrivateData::init()
     mainLayout->addWidget(pictureToolBar_);
     q->contentWidget()->setLayout(mainLayout);
 
-    UiGlobalSettings::obj()->setMainWindowObject(q);
-    UiGlobalSettings::obj()->configure(QLatin1String("setup.ini"));
+    G_UISETTIGNS->mainWindow = q;
+    G_UISETTIGNS->configure(QLatin1String("setup.ini"));
 
     QObject::connect(titleBar_, &MainTitleBar::clicked, q, &MainWindow::onMainTitleBarClicked);
     QObject::connect(titleBar_, &MainTitleBar::actionTriggered, q, &MainWindow::onMainTitleBarActionTriggered);
     QObject::connect(pictureScene_, &PictureScene::fileInfoChanged, titleBar_, &MainTitleBar::setTitle);
     QObject::connect(pictureScene_, &PictureScene::adaptiveTypeChanged, pictureToolBar_, &PictureToolBar::setAdaptiveType);
     QObject::connect(pictureToolBar_, &PictureToolBar::clicked, q, &MainWindow::onPictureToolBarClicked);
-    QObject::connect(UiGlobalSettings::obj(), &UiGlobalSettings::themeChanged, q, &MainWindow::onThemeChanged);
+    QObject::connect(G_UISETTIGNS, &UiGlobalSettings::themeChanged, q, &MainWindow::onThemeChanged);
     QObject::connect(q, &MainWindow::windowStateChaned, q, &MainWindow::onWindowStateChanged);
 }
 
