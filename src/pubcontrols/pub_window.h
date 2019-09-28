@@ -7,7 +7,6 @@
 class PubWindow : public QWidget
 {
     Q_OBJECT
-//    Q_PROPERTY(QColor windowShadow READ windowShadow WRITE setWindowShadow)
 public:
     explicit PubWindow(QWidget *parent = nullptr);
 

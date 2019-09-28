@@ -227,7 +227,6 @@ void PubWindow::setShadowEffect(qreal blurRadius)
     if (blurRadius > 0.0) {
         QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect;
         shadowEffect->setOffset(0, 0);
-//        shadowEffect->setColor(QColor(60, 60, 60));
         shadowEffect->setColor(windowShadowColor_);
         shadowEffect->setBlurRadius(blurRadius);
         contentWidget_->setGraphicsEffect(shadowEffect);

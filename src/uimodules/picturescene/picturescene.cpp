@@ -16,6 +16,8 @@
 #include <QTimer>
 #include <QDir>
 
+#include <QDebug>
+
 static const qreal kSceneMaxWidth = 10000.0;
 static const qreal kSceneMaxHeight = 10000.0;
 
@@ -36,7 +38,8 @@ public:
         toPreviousButton_(nullptr),
         toNextButton_(nullptr),
         adativeType_(PictureScene::AT_Ratio_1x1),
-        fileIndex_(-1)
+        fileIndex_(-1),
+        rotateAngles_(0)
     {}
 
     PictureScene *q;
@@ -48,9 +51,11 @@ public:
     QPixmap originalPixmap_;
     PictureScene::AdaptiveType adativeType_;
 
+    QString fileName_;
     QString fileInfo_;
     QStringList imagePathList_;
     int fileIndex_;
+    int rotateAngles_;
 
     void showOriginalPixmap();
     void showRatio1x1Pixmap();
@@ -61,6 +66,7 @@ public:
     bool compareImageSuffix(const QString &suffix);
     void updateFileInfo(const QString &fileName, bool isSearch);
     void setQuickViewButtonVisible(bool visible);
+    void rotate(int angles);
 };
 
 PictureScene::PictureScene(QWidget *parent) : QGraphicsView(parent),
@@ -76,7 +82,7 @@ PictureScene::PictureScene(QWidget *parent) : QGraphicsView(parent),
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    // 设置背景颜色和边框 
+    // 设置背景颜色和边框
     setStyleSheet(QString("background: %1; border: 0px;").arg(G_UISETTIGNS->themeColor().name()));
 
     QObject::connect(G_UISETTIGNS, &UiGlobalSettings::themeChanged, [&](){
@@ -120,17 +126,19 @@ void PictureScene::showPicture(const QPixmap &pixmap, AdaptiveType type)
         setBackgroundBrush(G_UISETTIGNS->themeColor());
     }
 
-    d->scene_->clear();
-    if (d->originalPixmap_ != pixmap)
-        d->originalPixmap_ = pixmap;
+    if (d->pixmapItem_) {
+        d->scene_->removeItem(d->pixmapItem_);
+        delete d->pixmapItem_.data();
+    }
 
     if (d->pixmapItem_.isNull()) {
         d->pixmapItem_ = new PixmapItem;
+        d->pixmapItem_->setFlag(QGraphicsItem::ItemIsMovable);
     }
 
-    d->pixmapItem_->setPixmap(pixmap);
-    d->pixmapItem_->setFlag(QGraphicsItem::ItemIsMovable);
     d->scene_->addItem(d->pixmapItem_);
+    d->originalPixmap_ = pixmap;
+    d->pixmapItem_->setPixmap(pixmap);
 
     setAdaptiveType(type);
     switch (d->adativeType_) {
@@ -147,7 +155,9 @@ void PictureScene::showPicture(const QPixmap &pixmap, AdaptiveType type)
 
 void PictureScene::showPicture(const QString &fileName, AdaptiveType type)
 {
-    showPicture(QPixmap::fromImage(QImage(fileName)), type);
+    d->fileName_ = fileName;
+    QPixmap pix = QPixmap::fromImage(QImage(fileName));
+    showPicture(pix, type);
     d->updateFileInfo(fileName, true);
 }
 
@@ -168,15 +178,13 @@ void PictureScene::adaptiveToggle()
 
 void PictureScene::zoomIn()
 {
-    if (!d->pixmapItem_ ||
-            d->pixmapItem_->sceneBoundingRect().width() > kSceneMaxWidth ||
-            d->pixmapItem_->sceneBoundingRect().height() > kSceneMaxHeight)
+    if (!d->pixmapItem_ || d->pixmapItem_->scale() > 3.2)
         return;
 
     QRectF previousRect = d->pixmapItem_->sceneBoundingRect();
     d->pixmapItem_->setScale(d->pixmapItem_->scale() * 1.1);
-    d->pixmapItem_->setPos(d->pixmapItem_->x()-(d->pixmapItem_->sceneBoundingRect().width()-previousRect.width())/2,
-                           d->pixmapItem_->y()-(d->pixmapItem_->sceneBoundingRect().height()-previousRect.height())/2);
+    d->pixmapItem_->setPos(d->pixmapItem_->x() - (d->pixmapItem_->sceneBoundingRect().width() - previousRect.width()) / 2,
+                           d->pixmapItem_->y() - (d->pixmapItem_->sceneBoundingRect().height() - previousRect.height()) / 2);
 }
 
 void PictureScene::zoomOut()
@@ -186,8 +194,8 @@ void PictureScene::zoomOut()
 
     QRectF previousRect = d->pixmapItem_->sceneBoundingRect();
     d->pixmapItem_->setScale(d->pixmapItem_->scale() * 0.9);
-    d->pixmapItem_->setPos(d->pixmapItem_->x()-(d->pixmapItem_->sceneBoundingRect().width()-previousRect.width())/2,
-                           d->pixmapItem_->y()-(d->pixmapItem_->sceneBoundingRect().height()-previousRect.height())/2);
+    d->pixmapItem_->setPos(d->pixmapItem_->x() - (d->pixmapItem_->sceneBoundingRect().width() - previousRect.width()) / 2,
+                           d->pixmapItem_->y() - (d->pixmapItem_->sceneBoundingRect().height() - previousRect.height()) / 2);
 }
 
 void PictureScene::rotateLeft()
@@ -195,14 +203,11 @@ void PictureScene::rotateLeft()
     if (!d->pixmapItem_)
         return;
 
-    // 设置旋转中心
-    d->pixmapItem_->setTransformOriginPoint(d->pixmapItem_->boundingRect().center());
+    int angles = static_cast<int>(d->pixmapItem_->rotation()) - 90;
+    if (angles < -270)
+        angles = 0;
 
-    qreal angles = d->pixmapItem_->rotation() - 90.0;
-    if (angles < -270.0)
-        angles = 0.0;
-
-    d->pixmapItem_->setRotation(angles);
+    d->rotate(angles);
 }
 
 void PictureScene::rotateRight()
@@ -210,14 +215,11 @@ void PictureScene::rotateRight()
     if (!d->pixmapItem_)
         return;
 
-    // 设置旋转中心
-    d->pixmapItem_->setTransformOriginPoint(d->pixmapItem_->boundingRect().center());
+    int angles = static_cast<int>(d->pixmapItem_->rotation()) + 90;
+    if (angles > 270)
+        angles = 0;
 
-    qreal angles = d->pixmapItem_->rotation() + 90.0;
-    if (angles > 270.0)
-        angles = 0.0;
-
-    d->pixmapItem_->setRotation(angles);
+    d->rotate(angles);
 }
 
 void PictureScene::setAdaptiveType(PictureScene::AdaptiveType type)
@@ -256,19 +258,19 @@ void PictureScene::toNext()
     d->updateFileInfo(fileName, false);
 }
 
-void PictureScene::resizeEvent(QResizeEvent *e)
+void PictureScene::resizeEvent(QResizeEvent *)
 {
-    Q_UNUSED(e)
     if (d->pixmapItem_) {
         showPicture(d->originalPixmap_, d->adativeType_);
+        d->rotate(d->rotateAngles_);
     }
 
     if (d->toPreviousButton_) {
-        d->toPreviousButton_->move(30, (this->height() - d->toPreviousButton_->height())/2);
+        d->toPreviousButton_->move(30, (height() - d->toPreviousButton_->height())/2);
     }
 
     if (d->toNextButton_) {
-        d->toNextButton_->move(this->width() - 30 - d->toNextButton_->width(), (this->height() - d->toNextButton_->height())/2);
+        d->toNextButton_->move(width() - 30 - d->toNextButton_->width(), (height() - d->toNextButton_->height())/2);
     }
 }
 
@@ -286,13 +288,12 @@ void PictureScene::mouseMoveEvent(QMouseEvent *e)
     if (!d->scene_) {
         e->ignore();
     } else {
-        int aw = this->width()/5;
-        if (e->x() < aw || e->x() > this->width()-aw) {
+        int aw = width()/5;
+        if (e->x() < aw || e->x() > width()-aw) {
             d->setQuickViewButtonVisible(true);
         } else {
             d->setQuickViewButtonVisible(false);
         }
-
 
         QList<QGraphicsItem*> items = d->scene_->items(e->pos());
         if (items.isEmpty()) {
@@ -318,7 +319,6 @@ void PictureScene::mousePressEvent(QMouseEvent *e)
             QGraphicsView::mousePressEvent(e);
         }
     }
-
 }
 
 void PictureScene::mouseReleaseEvent(QMouseEvent *e)
@@ -334,7 +334,6 @@ void PictureScene::mouseReleaseEvent(QMouseEvent *e)
             QGraphicsView::mouseReleaseEvent(e);
         }
     }
-
 }
 
 void PictureScene::dragEnterEvent(QDragEnterEvent *e)
@@ -365,6 +364,11 @@ void PictureScene::dropEvent(QDropEvent *e)
 
 void PictureScene::PrivateData::showOriginalPixmap()
 {
+#if 1
+    qreal cx = (q->width() - pixmapItem_->sceneBoundingRect().width()) / 2.0;
+    qreal cy = (q->height() - pixmapItem_->sceneBoundingRect().height()) / 2.0;
+    pixmapItem_->setPos(QPointF(cx, cy));
+#else
     // [0] 根据图片大小调整scene显示位置
     QPointF originalPos(0.0, 0.0);
     bool isOutWidth = originalPixmap_.width() > q->width();
@@ -391,6 +395,7 @@ void PictureScene::PrivateData::showOriginalPixmap()
         setPixmapAlignAlignment(Qt::AlignVCenter, q->rect());
     }
     // [1]
+#endif
 }
 
 void PictureScene::PrivateData::showRatio1x1Pixmap()
@@ -398,9 +403,9 @@ void PictureScene::PrivateData::showRatio1x1Pixmap()
     if (pixmapItem_->sceneBoundingRect().width() > q->width() || pixmapItem_->sceneBoundingRect().height() > q->height()) {
         qreal ratio = pixmapItem_->sceneBoundingRect().width() / pixmapItem_->sceneBoundingRect().height();
         if (ratio > 1.0) {
-            pixmapItem_->setScale(pixmapItem_->scale() * (static_cast<qreal>(q->width()) / originalPixmap_.width() * 0.95));
+            pixmapItem_->setScale(pixmapItem_->scale() * (static_cast<qreal>(q->width()) / originalPixmap_.width() * 0.92));
         } else {
-            pixmapItem_->setScale(pixmapItem_->scale() * (static_cast<qreal>(q->height()) / originalPixmap_.height() * 0.95));
+            pixmapItem_->setScale(pixmapItem_->scale() * (static_cast<qreal>(q->height()) / originalPixmap_.height() * 0.92));
         }
     }
 
@@ -496,7 +501,7 @@ void PictureScene::PrivateData::updateFileInfo(const QString &fileName, bool isS
     fileInfo_.clear();
     fileInfo_.append(fileName.mid(fileName.lastIndexOf("/") + 1));
     fileInfo_.append(QString("(%1, %2x%3px)").arg(transformFileSize(QFile(fileName).size()))
-                        .arg(originalPixmap_.width()).arg(originalPixmap_.height()));
+                     .arg(originalPixmap_.width()).arg(originalPixmap_.height()));
 
     if (isSearch) {
         searchImageFiles(fileName.mid(0, fileName.lastIndexOf("/")));
@@ -540,4 +545,76 @@ void PictureScene::PrivateData::setQuickViewButtonVisible(bool visible)
             toNextButton_->requestHide();
         }
     }
+}
+
+void PictureScene::PrivateData::rotate(int angles)
+{
+    if (!pixmapItem_)
+        return;
+
+    rotateAngles_ = angles;
+
+    if (pixmapItem_->scale() != 1.0) {
+        pixmapItem_->setScale(1.0);
+        showOriginalPixmap();
+    }
+
+    // 设置旋转中心
+    QRectF boundingRect = pixmapItem_->boundingRect();
+    pixmapItem_->setTransformOriginPoint(boundingRect.center());
+
+    pixmapItem_->setRotation(angles);
+
+    if (angles == 90 || angles == -270) {
+        if (boundingRect.height() > q->height()) {
+            qreal hhRatio = q->height() / boundingRect.width();
+            pixmapItem_->setScale(hhRatio);
+            q->centerOn(QPointF(0.0, 0.0));
+            pixmapItem_->setTransformOriginPoint(QPointF(0.0, 0.0));
+            QRectF sceneBoundingRect = pixmapItem_->sceneBoundingRect();
+            qreal cx = sceneBoundingRect.width() + (q->width() - sceneBoundingRect.width()) / 2.0;
+            qreal cy = 0.0;
+            pixmapItem_->setPos(cx, cy);
+        }
+    }
+    else if (angles == 180 || angles == -180) {
+        if (boundingRect.width() > q->width() || boundingRect.height() > q->height()) {
+            showRatio1x1Pixmap();
+            pixmapItem_->setTransformOriginPoint(QPointF(0.0, 0.0));
+            QRectF sceneBoundingRect = pixmapItem_->sceneBoundingRect();
+            qreal cx = sceneBoundingRect.width() + (q->width() - sceneBoundingRect.width()) / 2.0;
+            qreal cy = sceneBoundingRect.height() + (q->height() - sceneBoundingRect.height()) / 2.0;
+            pixmapItem_->setPos(QPointF(cx, cy));
+        }
+    }
+    else if (angles == 270 || angles == -90) {
+        if (boundingRect.height() > q->height()) {
+            qreal hhRatio = q->height() / boundingRect.width();
+            pixmapItem_->setScale(hhRatio);
+            q->centerOn(QPointF(0.0, 0.0));
+            pixmapItem_->setTransformOriginPoint(QPointF(0.0, 0.0));
+            QRectF sceneBoundingRect = pixmapItem_->sceneBoundingRect();
+            qreal cx = (q->width() - sceneBoundingRect.width()) / 2.0;
+            qreal cy = sceneBoundingRect.height();
+            pixmapItem_->setPos(cx, cy);
+        }
+    }
+    else if (angles == 0) {
+        if (boundingRect.width() > q->width() || boundingRect.height() > q->height()) {
+            showRatio1x1Pixmap();
+            pixmapItem_->setTransformOriginPoint(QPointF(0.0, 0.0));
+            QRectF sceneBoundingRect = pixmapItem_->sceneBoundingRect();
+            qreal cx = (q->width() - sceneBoundingRect.width()) / 2.0;
+            qreal cy = (q->height() - sceneBoundingRect.height()) / 2.0;
+            pixmapItem_->setPos(QPointF(cx, cy));
+        }
+    }
+
+    // 保存
+    QMatrix matrix;
+    matrix.rotate(angles);
+
+    QPixmap pix = pixmapItem_->pixmap();
+    pix = pix.transformed(matrix, Qt::SmoothTransformation);
+    pix.save(fileName_);
 }
