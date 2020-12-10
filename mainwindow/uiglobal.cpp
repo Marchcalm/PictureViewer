@@ -41,7 +41,8 @@ void UiGlobalSettings::setTheme(UiGlobalSettings::ThemeType type)
     if (d->themeType_ != type) {
         QResource::unregisterResource(d->rccMap_.value(d->themeType_));
         d->themeType_ = type;
-        bool isOk = QResource::registerResource(d->rccMap_.value(type));
+        QString rcc = QCoreApplication::applicationDirPath() + "/" + d->rccMap_.value(type);
+        bool isOk = QResource::registerResource(rcc);
         if (!isOk) {
             qDebug() << "registerResource failed!";
         }
@@ -71,6 +72,15 @@ void UiGlobalSettings::setWidgetBackgroundColor(QWidget *w, const QColor &c)
         pal.setColor(QPalette::Window, c);
         w->setPalette(pal);
         w->setAutoFillBackground(true);
+    }
+}
+
+QString UiGlobalSettings::toCurrentResource(const QString &fileName)
+{
+    switch (d->themeType_) {
+    case UiGlobalSettings::TT_CoolBlack: return QLatin1String(":/coolblack/") + fileName;
+    case UiGlobalSettings::TT_ClassicWhite: return QLatin1String(":/classicwhite/") + fileName;
+    default: return QLatin1String(":/") +fileName;
     }
 }
 

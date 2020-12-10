@@ -55,7 +55,7 @@ void AppSettinsWidget::PrivateData::init()
 
     PubLabel *logoLabel = new PubLabel(titleBar);
     logoLabel->setFixedSize(iconw, iconw);
-    logoLabel->setPixmap(QLatin1String(":/images/hy_main_settings_01.png"));
+    logoLabel->setPixmap(RCC_WRAPPER("hy_main_settings_01.png"));
 
     PubLabel *windowTitleLabel = new PubLabel(titleBar);
     windowTitleLabel->setMinimumWidth(140);
@@ -66,7 +66,7 @@ void AppSettinsWidget::PrivateData::init()
 
     PubPushButton *closeBtn = new PubPushButton(titleBar);
     closeBtn->setFixedSize(iconw, iconw);
-    closeBtn->setBackground(QLatin1String(":/images/hy_main_close_01.png"));
+    closeBtn->setBackground(RCC_WRAPPER("hy_main_close_01.png"));
     closeBtn->setBackgroundColorByHovered(QColor(205, 0, 0, 150));
     closeBtn->setBackgroundColorByPressed(QColor(205, 0, 0, 255));
     QObject::connect(closeBtn, &PubPushButton::clicked, q, &AppSettinsWidget::close);

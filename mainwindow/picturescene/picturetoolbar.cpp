@@ -89,15 +89,15 @@ void PictureToolBar::onButtonClicked()
 void PictureToolBar::onThemeChanged(int type)
 {
     Q_UNUSED(type)
-    d->openFileButton_->setBackground(QLatin1String(":/images/hy_ps_openfile_01.png"));
-    d->editButton_->setBackground(QLatin1String(":/images/hy_ps_edit_01.png"));
+    d->openFileButton_->setBackground(RCC_WRAPPER("hy_ps_openfile_01.png"));
+    d->editButton_->setBackground(RCC_WRAPPER("hy_ps_edit_01.png"));
     d->updateAdaptiveButtonState();
-    d->zoomInButton_->setBackground(QLatin1String(":/images/hy_ps_zoomin_01.png"));
-    d->zoomOutButton_->setBackground(QLatin1String(":/images/hy_ps_zoomout_01.png"));
-    d->toPreviousButton_->setBackground(QLatin1String(":/images/hy_ps_toprevious_01.png"));
-    d->toNextButton_->setBackground(QLatin1String(":/images/hy_ps_tonext_01.png"));
-    d->rotateLeftButton_->setBackground(QLatin1String(":/images/hy_ps_rotateleft_01.png"));
-    d->rotateRightButton_->setBackground(QLatin1String(":/images/hy_ps_rotateright_01.png"));
+    d->zoomInButton_->setBackground(RCC_WRAPPER("hy_ps_zoomin_01.png"));
+    d->zoomOutButton_->setBackground(RCC_WRAPPER("hy_ps_zoomout_01.png"));
+    d->toPreviousButton_->setBackground(RCC_WRAPPER("hy_ps_toprevious_01.png"));
+    d->toNextButton_->setBackground(RCC_WRAPPER("hy_ps_tonext_01.png"));
+    d->rotateLeftButton_->setBackground(RCC_WRAPPER("hy_ps_rotateleft_01.png"));
+    d->rotateRightButton_->setBackground(RCC_WRAPPER("hy_ps_rotateright_01.png"));
     update();
 }
 
@@ -195,8 +195,8 @@ void PictureToolBar::PrivateData::init()
 void PictureToolBar::PrivateData::updateAdaptiveButtonState()
 {
     if (isAdaptive1x1_) {
-        adaptiveButton_->setBackground(QLatin1String(":/images/hy_ps_1x1_01.png"));
+        adaptiveButton_->setBackground(RCC_WRAPPER("hy_ps_1x1_01.png"));
     } else {
-        adaptiveButton_->setBackground(QLatin1String(":/images/hy_ps_adaptive_01.png"));
+        adaptiveButton_->setBackground(RCC_WRAPPER("hy_ps_adaptive_01.png"));
     }
 }

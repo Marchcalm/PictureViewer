@@ -1,0 +1,27 @@
+<RCC>
+	<qresource prefix="/">
+		<file>classicwhite/hy_main_close_01.png</file>
+		<file>classicwhite/hy_main_fullscreen_01.png</file>
+		<file>classicwhite/hy_main_fullscreen_02.png</file>
+		<file>classicwhite/hy_main_gou_01.png</file>
+		<file>classicwhite/hy_main_logo_01.png</file>
+		<file>classicwhite/hy_main_maximize_01.png</file>
+		<file>classicwhite/hy_main_maximize_02.png</file>
+		<file>classicwhite/hy_main_menu_01.png</file>
+		<file>classicwhite/hy_main_minimize_01.png</file>
+		<file>classicwhite/hy_main_settings_01.png</file>
+		<file>classicwhite/hy_main_skin_01.png</file>
+		<file>classicwhite/hy_ps_1x1_01.png</file>
+		<file>classicwhite/hy_ps_adaptive_01.png</file>
+		<file>classicwhite/hy_ps_edit_01.png</file>
+		<file>classicwhite/hy_ps_openfile_01.png</file>
+		<file>classicwhite/hy_ps_rotateleft_01.png</file>
+		<file>classicwhite/hy_ps_rotateright_01.png</file>
+		<file>classicwhite/hy_ps_tonext_01.png</file>
+		<file>classicwhite/hy_ps_tonext_XL_01.png</file>
+		<file>classicwhite/hy_ps_toprevious_01.png</file>
+		<file>classicwhite/hy_ps_toprevious_XL_01.png</file>
+		<file>classicwhite/hy_ps_zoomin_01.png</file>
+		<file>classicwhite/hy_ps_zoomout_01.png</file>
+	</qresource>
+</RCC>

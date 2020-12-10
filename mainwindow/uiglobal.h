@@ -9,10 +9,14 @@
 
 #define MAINWINDOW UiGlobalSettings::obj()->mainWindow
 
+#define RCC_WRAPPER(f)  G_UISETTIGNS->toCurrentResource(f)
+
 #include <QObject>
 
 class QWidget;
 class MainWindow;
+
+extern QString RCC_WRAPPER;
 
 class UiGlobalSettings : public QObject
 {
@@ -39,6 +43,8 @@ public:
     QString appName() const;
 
     void setWidgetBackgroundColor(QWidget *w, const QColor &c);
+
+    QString toCurrentResource(const QString& fileName);
 
 signals:
     void themeChanged(int type);

@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "maintitlebar/maintitlebar.h"
+#include "maintitlebar.h"
 #include "picturescene/picturescene.h"
 #include "picturescene/picturetoolbar.h"
 #include "appsettins/appsettinswidget.h"

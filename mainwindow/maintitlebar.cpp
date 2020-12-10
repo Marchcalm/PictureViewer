@@ -58,14 +58,14 @@ void MainTitleBar::onWindowStateChanged(Qt::WindowStates state)
     d->windwowState_ = state;
     switch (state) {
     case Qt::WindowNoState:
-        d->maximizeButton_->setBackground(QLatin1String(":/images/hy_main_maximize_01.png"));
-        d->fullScreenButton_->setBackground(QLatin1String(":/images/hy_main_fullscreen_01.png"));
+        d->maximizeButton_->setBackground(RCC_WRAPPER("hy_main_maximize_01.png"));
+        d->fullScreenButton_->setBackground(RCC_WRAPPER("hy_main_fullscreen_01.png"));
         break;
     case Qt::WindowMaximized:
-        d->maximizeButton_->setBackground(QLatin1String(":/images/hy_main_maximize_02.png"));
+        d->maximizeButton_->setBackground(RCC_WRAPPER("hy_main_maximize_02.png"));
         break;
     case Qt::WindowFullScreen:
-        d->fullScreenButton_->setBackground(QLatin1String(":/images/hy_main_fullscreen_02.png"));
+        d->fullScreenButton_->setBackground(RCC_WRAPPER("hy_main_fullscreen_02.png"));
         break;
     default:
         break;
@@ -123,11 +123,11 @@ void MainTitleBar::onThemeChanged(int type)
 
     onWindowStateChanged(d->windwowState_);
 
-    d->logoLabel_->setPixmap(QLatin1String(":/images/hy_main_logo_01.png"));
-    d->skinButton_->setBackground(QLatin1String(":/images/hy_main_skin_01.png"));
-    d->PrimaryMenuButton_->setBackground(QLatin1String(":/images/hy_main_menu_01.png"));
-    d->minimizeButton_->setBackground(QLatin1String(":/images/hy_main_minimize_01.png"));
-    d->closeButton_->setBackground(QLatin1String(":/images/hy_main_close_01.png"));
+    d->logoLabel_->setPixmap(RCC_WRAPPER("hy_main_logo_01.png"));
+    d->skinButton_->setBackground(RCC_WRAPPER("hy_main_skin_01.png"));
+    d->PrimaryMenuButton_->setBackground(RCC_WRAPPER("hy_main_menu_01.png"));
+    d->minimizeButton_->setBackground(RCC_WRAPPER("hy_main_minimize_01.png"));
+    d->closeButton_->setBackground(RCC_WRAPPER("hy_main_close_01.png"));
     update();
 }
 
@@ -204,12 +204,11 @@ void MainTitleBar::PrivateData::popupSkinMenu()
     QMenu *menu = new QMenu;
     menu->setStyleSheet(QLatin1String("QMenu {"
                                       "background-color: white;"
-                                      "margin: 0px;"
+                                      "border: 1px solid #D7D7D7;"
                                       "}"
                                       "QMenu::item {"
-                                      "height: 20px;"
-                                      "padding: 4px 20px 4px 30px;"
-                                      "border: none;"
+                                      "height: 30px;"
+                                      "padding: 0px 30px 0px 20px;"
                                       "}"
                                       "QMenu::item:selected {"
                                       "background: rgba(120, 120, 120, 120);"
@@ -222,7 +221,7 @@ void MainTitleBar::PrivateData::popupSkinMenu()
     menu->addAction(TR::CoolBlack);
     menu->addAction(TR::ClassicWhite);
 
-    menu->actions().at(G_UISETTIGNS->themeType())->setIcon(QIcon(":/images/hy_main_gou_01.png"));
+    menu->actions().at(G_UISETTIGNS->themeType())->setIcon(QIcon(RCC_WRAPPER("hy_main_gou_01.png")));
 
     QObject::connect(menu, &QMenu::triggered, [&](QAction* action){
         if (TR::CoolBlack == action->text()) {
@@ -244,12 +243,11 @@ void MainTitleBar::PrivateData::popupPrimaryMenu()
     QMenu *menu = new QMenu;
     menu->setStyleSheet(QLatin1String("QMenu {"
                                       "background-color: white;"
-                                      "margin: 0px;"
+                                      "border: 1px solid #D7D7D7;"
                                       "}"
                                       "QMenu::item {"
-                                      "height: 20px;"
-                                      "padding: 4px 60px 4px 30px;"
-                                      "border: none;"
+                                      "height: 30px;"
+                                      "padding: 0px 30px 0px 20px;"
                                       "}"
                                       "QMenu::item:selected {"
                                       "background: rgba(120, 120, 120, 120);"
@@ -260,9 +258,9 @@ void MainTitleBar::PrivateData::popupPrimaryMenu()
                                       "QMenu::separator {"
                                       "height: 1px;"
                                       "background: #ccc;"
-                                      "margin-top: 5px;"
-                                      "margin-bottom: 5px;"
-                                      "margin-left: 30px;"
+                                      "margin-top: 2px;"
+                                      "margin-bottom: 2px;"
+                                      "margin-left: 5px;"
                                       "margin-right: 5px;"
                                       "}"
                                       ));
@@ -270,7 +268,7 @@ void MainTitleBar::PrivateData::popupPrimaryMenu()
 
     menu->addAction(QString("About %1").arg(G_UISETTIGNS->appName()));
     menu->addSeparator();
-    menu->addAction(new QAction(QIcon(QLatin1String(":/images/hy_main_settings_01.png")), TR::Settings));
+    menu->addAction(new QAction(QIcon(RCC_WRAPPER("hy_main_settings_01.png")), TR::Settings));
 
     QObject::connect(menu, &QMenu::triggered, [&](QAction* action){
         if (TR::Settings == action->text()) {
